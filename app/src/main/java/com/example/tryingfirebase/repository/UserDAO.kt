@@ -1,11 +1,20 @@
 package com.example.tryingfirebase.repository
 
 import com.example.tryingfirebase.listener.FirebaseListener
+import com.example.tryingfirebase.models.UserEditModel
 import com.example.tryingfirebase.models.UserModel
 import com.google.firebase.firestore.FirebaseFirestore
 
 class UserDAO {
     private var db: FirebaseFirestore = FirebaseFirestore.getInstance()
+
+    companion object {
+        private const val COLLECTION_NAME = "users_collection"
+        private const val FIELD_NAME = "name"
+        private const val FIELD_AGE = "age"
+        private const val FIELD_DISABILITY = "have_disability"
+    }
+
 
     fun add(user: UserModel, firebaseListener: FirebaseListener<Boolean>){
 
@@ -36,4 +45,22 @@ class UserDAO {
         }
     }
 
+    fun edit(user: UserEditModel){
+        val userData: MutableMap<String, Any> = HashMap(
+            mapOf(
+                FIELD_NAME to user.name,
+                FIELD_AGE to user.age,
+                FIELD_DISABILITY to user.disability
+            )
+        )
+
+
+        db.collection(COLLECTION_NAME)
+            .document(user.editName)
+            .update(userData)
+            .addOnSuccessListener { println("Usuário atualizado com sucesso!") }
+            .addOnFailureListener { exception ->
+                println("Erro ao atualizar usuário: ${exception.message}")
+            }
+    }
 }

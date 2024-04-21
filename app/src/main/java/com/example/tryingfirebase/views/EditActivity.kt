@@ -6,6 +6,7 @@ import android.view.View.OnClickListener
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.tryingfirebase.databinding.ActivityEditBinding
+import com.example.tryingfirebase.models.UserEditModel
 import com.example.tryingfirebase.models.UserModel
 import com.example.tryingfirebase.viewmodels.EditViewModel
 
@@ -13,7 +14,7 @@ class EditActivity : AppCompatActivity(), OnClickListener {
 
     private lateinit var binding: ActivityEditBinding
     private lateinit var viewModel: EditViewModel
-    private lateinit var userM: UserModel
+    private lateinit var userM: UserEditModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +42,17 @@ class EditActivity : AppCompatActivity(), OnClickListener {
     }
 
     private fun edit(){
+        println("XNAMEX ")
+
+        var name = binding.name.text.toString()
+        val age = binding.age.text
+        val di = binding.debility.isChecked
+        userM.name = name
+        userM.age = age.toString().toInt()
+        userM.disability = di
+        println("XNAME ${userM.age} ${di}")
         viewModel.edit(userM)
+        finish()
     }
 
     private fun setData(){
@@ -49,9 +60,9 @@ class EditActivity : AppCompatActivity(), OnClickListener {
         val age = intent.getIntExtra("age_user", 0)
         val di = intent.getBooleanExtra("disability_user", false)
         if(name == null) name = ""
-        userM = UserModel(name, age, di)
+        userM = UserEditModel(name, age, di, name)
         binding.name.setText(name)
-        binding.age.setText("${age} anos")
+        binding.age.setText("${age}")
         binding.debility.isChecked = di
 
     }
