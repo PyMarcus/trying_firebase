@@ -1,6 +1,7 @@
 package com.example.tryingfirebase.views
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.view.View.OnClickListener
@@ -10,15 +11,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.tryingfirebase.adapter.UserAdapter
 import com.example.tryingfirebase.databinding.ActivityContentBinding
 import com.example.tryingfirebase.listener.UserListener
-import com.example.tryingfirebase.models.UserModel
 import com.example.tryingfirebase.repository.SecurityPreferences
 import com.example.tryingfirebase.viewmodels.ContentViewModel
-import java.util.Date
+import com.google.android.material.snackbar.Snackbar
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class ContentActivity : AppCompatActivity(), OnClickListener {
-    lateinit var viewModel: ContentViewModel
-    lateinit var securityPreferences: SecurityPreferences
-    lateinit var binding: ActivityContentBinding
+    private lateinit var viewModel: ContentViewModel
+    private lateinit var securityPreferences: SecurityPreferences
+    private lateinit var binding: ActivityContentBinding
     private val userAdapter: UserAdapter = UserAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,6 +39,7 @@ class ContentActivity : AppCompatActivity(), OnClickListener {
 
         handleEvents()
 
+        viewModel.listAll()
 
         observers()
 
@@ -59,23 +63,36 @@ class ContentActivity : AppCompatActivity(), OnClickListener {
     override fun onClick(v: View) {
         when(v.id){
             binding.btnLogoff.id -> logoff()
+            binding.btnAddUser.id -> add()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.listAll()
     }
 
     private fun handleEvents(){
         binding.btnLogoff.setOnClickListener(this)
+        binding.btnAddUser.setOnClickListener(this)
     }
 
     private fun observers(){
-        val user = UserModel("Jose", 18, false, Date(2022, 10, 21)
-            ,Date(2022, 10, 21))
-        val user2 = UserModel("Jose 2", 118, true, Date(2023, 11, 11)
-            ,Date(2021, 11, 31))
-        val user3 = UserModel("Jose 2", 118, true, Date(2023, 11, 11)
-            ,Date(2021, 11, 31))
-        val user4 = UserModel("Jose 2", 118, true, Date(2023, 11, 11)
-            ,Date(2021, 11, 31))
-        userAdapter.updateUsers(arrayListOf(user, user2, user3, user4))
+        viewModel.usersData.observe(this){
+            data -> userAdapter.updateUsers(data)
+        }
+
+        viewModel.saveUser.observe(this){
+            it -> if(it){
+                alert(binding.root, "Usuário salvo!")
+            }
+        }
+
+        viewModel.message.observe(this){
+                message -> if(message != ""){
+                    alert(binding.root, message)
+            }
+        }
     }
 
     private fun logoff(){
@@ -83,6 +100,35 @@ class ContentActivity : AppCompatActivity(), OnClickListener {
 
         startActivity(Intent(this, MainActivity::class.java))
         finish()
+    }
+
+    private fun add(){
+        val name = binding.name.text.toString()
+        val a = binding.age.text.toString()
+        var age = 0
+        if(a != ""){
+            age = a.toInt()
+        }
+        val debility = binding.debility.isChecked
+
+        val calendar = Calendar.getInstance()
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale("pt", "BR"))
+        val dateTime = dateFormat.format(calendar.time)
+        val created = dateFormat
+        val updated = dateFormat
+        if(!name.isNullOrEmpty() && age != 0){
+            viewModel.addUser(name, age, debility, created, updated)
+        }else{
+            alert(binding.root, "Preencha os campos!")
+        }
+    }
+
+    private fun alert(view: View, message: String){
+        val snackbar = Snackbar.make(view,
+            message,
+            Snackbar.LENGTH_SHORT)
+        snackbar.setBackgroundTint(Color.YELLOW)
+        snackbar.show()
     }
 
 }
