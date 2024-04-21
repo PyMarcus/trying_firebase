@@ -25,8 +25,8 @@ class ContentViewModel(application: Application): AndroidViewModel(application) 
     private var _message: MutableLiveData<String> = MutableLiveData()
     var message: LiveData<String> = _message
 
-    fun addUser(name: String, age: Int, debility: Boolean, created: SimpleDateFormat, updated: SimpleDateFormat){
-        val user = UserModel(name, age, debility, created, updated)
+    fun addUser(name: String, age: Int, debility: Boolean){
+        val user = UserModel(name, age, debility)
         userDAO.add(user, object : FirebaseListener<Boolean>{
             override fun response(data: Boolean) {
                 if(data){

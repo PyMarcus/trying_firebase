@@ -1,11 +1,16 @@
 package com.example.tryingfirebase.adapter
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tryingfirebase.databinding.UsersItemBinding
 import com.example.tryingfirebase.listener.UserListener
 import com.example.tryingfirebase.models.UserModel
+import com.example.tryingfirebase.views.EditActivity
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class UserAdapter : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
 
@@ -48,6 +53,13 @@ class UserAdapter : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
                     itemBinding.disability.text = "Não possui deficiência"
 
                 itemBinding.created.text = "Inserção em 10/02/32 às 18h30"
+                itemBinding.edit.setOnClickListener{
+                    val intent = Intent(itemView.context, EditActivity::class.java)
+                    intent.putExtra("name_user", user.name)
+                    intent.putExtra("age_user", user.age)
+                    intent.putExtra("disability_user", user.disability)
+                    itemView.context.startActivity(intent)
+                }
             }
 
     }

@@ -111,13 +111,8 @@ class ContentActivity : AppCompatActivity(), OnClickListener {
         }
         val debility = binding.debility.isChecked
 
-        val calendar = Calendar.getInstance()
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale("pt", "BR"))
-        val dateTime = dateFormat.format(calendar.time)
-        val created = dateFormat
-        val updated = dateFormat
         if(!name.isNullOrEmpty() && age != 0){
-            viewModel.addUser(name, age, debility, created, updated)
+            viewModel.addUser(name, age, debility)
         }else{
             alert(binding.root, "Preencha os campos!")
         }

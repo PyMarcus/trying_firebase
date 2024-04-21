@@ -3,9 +3,6 @@ package com.example.tryingfirebase.repository
 import com.example.tryingfirebase.listener.FirebaseListener
 import com.example.tryingfirebase.models.UserModel
 import com.google.firebase.firestore.FirebaseFirestore
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 
 class UserDAO {
     private var db: FirebaseFirestore = FirebaseFirestore.getInstance()
@@ -26,13 +23,12 @@ class UserDAO {
         val userList = mutableListOf<UserModel>()
 
         db.collection("users_collection").get().addOnSuccessListener {result->
-            val calendar = Calendar.getInstance()
-            val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale("pt", "BR"))
+
             for (document in result) {
                 val name = document.getString("name") ?: ""
                 val age = document.getLong("age") ?: 0
                 val disability = document.getBoolean("have_disability") ?: false
-                val user = UserModel(name, age.toInt(), disability, dateFormat, dateFormat)
+                val user = UserModel(name, age.toInt(), disability)
                 println("USER ${user.name}")
                 userList.add(user)
             }
